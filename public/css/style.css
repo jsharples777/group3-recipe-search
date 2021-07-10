@@ -25,6 +25,7 @@ nav {
     margin-bottom: 5%;
     padding: 10px;
     border-radius: 14px;
+
 }
 
 .modal-close-button {}
@@ -45,7 +46,6 @@ nav {
 .cursor-link:active {
     cursor: progress;
 }
-
 
 .navbar {
     background-color: #424b54;
@@ -80,4 +80,6 @@ nav {
     top: 0px;
     right: 10px;
     z-index: 100;
+    transition: all 500ms ease-in-out;
 }
+

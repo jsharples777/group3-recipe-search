@@ -15,7 +15,7 @@ class App extends React.Component {
         this.searchInProgress = false;
 
         /* turn on console messages for development*/
-        logger.setOn();
+        logger.setOff();
         logger.setLevel(200);
         logger.setMinLevel(0);
 
