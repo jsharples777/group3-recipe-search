@@ -6,6 +6,7 @@ import RecipeSearchResults from "./ui/RecipeSearchResults.js";
 import Pagination from "./ui/Pagination.js";
 import logger from "./util/SimpleDebug.js";
 import LocationList from "./ui/LocationList.js";
+import notifier from "./NotificationManager.js";
 
 class App extends React.Component {
     constructor() {
@@ -14,7 +15,7 @@ class App extends React.Component {
         this.searchInProgress = false;
 
         /* turn on console messages for development*/
-        logger.setOff();
+        logger.setOn();
         logger.setLevel(200);
         logger.setMinLevel(0);
 
@@ -27,13 +28,15 @@ class App extends React.Component {
         this.handleEventRemoveRecipeFromFavourites = this.handleEventRemoveRecipeFromFavourites.bind(this);
         this.handleEventAddRecipeToShoppingList = this.handleEventAddRecipeToShoppingList.bind(this);
         this.handleEventShowShoppingList = this.handleEventShowShoppingList.bind(this);
+        this.handleEventShowFavouriteRecipes = this.handleEventShowFavouriteRecipes.bind(this);
         this.handleEventShowLocationList = this.handleEventShowLocationList.bind(this);
 
-        this.handleEventShowFavouriteRecipes = this.handleEventShowFavouriteRecipes.bind(this);
         this.handleEventRemoveIngredientFromShoppingList = this.handleEventRemoveIngredientFromShoppingList.bind(this);
+
         this.handleEventShowRecipeDetailsFromFavourites = this.handleEventShowRecipeDetailsFromFavourites.bind(this);
         this.handleEventShowRecipeDetailsFromSearch = this.handleEventShowRecipeDetailsFromSearch.bind(this);
         this.handleEventAddFavouriteRecipeToShoppingList = this.handleEventAddFavouriteRecipeToShoppingList.bind(this);
+
         this.handleEventPaginationPageNumberPressed = this.handleEventPaginationPageNumberPressed.bind(this);
         this.handleEventPaginationPreviousPressed = this.handleEventPaginationPreviousPressed.bind(this);
         this.handleEventPaginationNextPressed = this.handleEventPaginationNextPressed.bind(this);
@@ -52,18 +55,19 @@ class App extends React.Component {
             showShoppingList: false,
             showFavouriteRecipes: false,
             showRecipeDetails: false,
-            showLocations:false,
+            showLocationDetails: false,
             selectedRecipe: null,
             selectedRecipeIsFavourite: false,
             currentPageNumber: 1,
             totalPages: 1,
-            resultsPerPage: 5
+            resultsPerPage: 5,
+            allowNotifications: true
         };
 
     }
 
     handleCloseModals(event) {
-        this.setState({showShoppingList: false, showFavouriteRecipes: false, showRecipeDetails: false,showLocations:false});
+        this.setState({showShoppingList: false, showFavouriteRecipes: false, showRecipeDetails: false, showLocations:false});
     }
 
     doNothingHandler(event) {
@@ -106,7 +110,7 @@ class App extends React.Component {
                             previousHandler={this.handleEventPaginationPreviousPressed}
                             pageHandler={this.handleEventPaginationPageNumberPressed}/>
 
-                <footer className="footer" style={{textAlign: "center"}}>Copyright 2021 Chop 'n' Change.  All rights reserved</footer>
+                <footer className="footer" style={{textAlign: "center"}}>Copyright 2021 Chop 'n' Change.  All rights reserved.</footer>
             </div>
         );
     }
@@ -257,6 +261,11 @@ class App extends React.Component {
 
     }
 
+    showNotification(title, message, className = "info", timeout = 5000) {
+        if (!this.state.allowNotifications) return;
+        notifier.show(title, message, className, timeout);
+    }
+
     /*
     This the event handler for when the user adds a recipe to the favourites
     */
@@ -268,9 +277,15 @@ class App extends React.Component {
 
         let recipeId = event.target.getAttribute("recipe-id");
         if (logger.isOn() && (100 <= logger.level()) && (100 >= logger.minlevel())) console.log("Handling event - Add Recipe to Favourites List with id " + recipeId);
-
-        this.controller.addRecipeToFavouriteRecipes(this.controller.getRecipeFromLastSearchResultsById(recipeId));
+        let recipe = this.controller.getRecipeFromLastSearchResultsById(recipeId);
+        let wasAdded = this.controller.addRecipeToFavouriteRecipes(recipe);
         // this app will be notified when the application state changes and will see a call to handleFavouriteRecipesChange (ABOVE)
+        if (wasAdded) {
+            this.showNotification("Favourite Recipes", `Added ${recipe.name} to favourites.`,"success");
+        }
+        else {
+            this.showNotification("Favourite Recipes", `Already added ${recipe.name}`,"warning");
+        }
     }
 
     /*
@@ -281,14 +296,18 @@ class App extends React.Component {
         let recipeId = event.target.getAttribute("recipe-id");
         if (logger.isOn() && (100 <= logger.level()) && (100 >= logger.minlevel())) console.log("Removing recipes with id " + recipeId);
 
+        let recipe = this.controller.getRecipeFromFavouritesById(recipeId);
         this.controller.removeRecipeFromFavouriteRecipesById(recipeId);
         // this app will be notified when the application state changes and will see a call to handleFavouriteRecipesChange (ABOVE)
+        this.showNotification("Favourite Recipes", `Removed ${recipe.name} from favourites.`,"danger");
     }
 
     handleEventAddFavouriteRecipeToShoppingList(event) {
         if (logger.isOn() && (100 <= logger.level()) && (100 >= logger.minlevel())) console.log("Handling event - add Favourite Recipe to Shopping List");
         let recipeId = event.target.getAttribute("recipe-id");
-        this.controller.addRecipeIngredientsToShoppingList(this.controller.getRecipeFromFavouritesById(recipeId));
+        let recipe = this.controller.getRecipeFromFavouritesById(recipeId);
+        this.controller.addRecipeIngredientsToShoppingList(recipe);
+        this.showNotification("Shopping List", `Added ingredients from ${recipe.name} to shopping list.`);
     }
 
     /*
@@ -301,10 +320,12 @@ class App extends React.Component {
         */
 
         let recipeId = event.target.getAttribute("recipe-id");
+        let recipe = this.controller.getRecipeFromLastSearchResultsById(recipeId);
 
 
-        this.controller.addRecipeIngredientsToShoppingList(this.controller.getRecipeFromLastSearchResultsById(recipeId));
+        this.controller.addRecipeIngredientsToShoppingList(recipe);
         // this app will be notified when the application state changes
+        this.showNotification("Shopping List", `Added ingredients from ${recipe.name} to shopping list.`);
     }
 
     /*
@@ -386,7 +407,7 @@ class App extends React.Component {
         let filtersDiv = document.getElementById("filters");
         let filters = filtersDiv.querySelectorAll("input");
         filters.forEach((filter,index) => {
-           filter.checked = false;
+            filter.checked = false;
         });
     }
 }

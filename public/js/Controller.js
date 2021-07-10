@@ -307,15 +307,17 @@ export default class Controller {
     /*
     Add a new recipe to the favourite recipes
     Pass in a recipe object (from a search)
-    Returns the modified list of favourite recipes
+    Returns whether the recipe was added
      */
     addRecipeToFavouriteRecipes(recipeObjFromSearch) {
+        let result = false;
         let favouriteRecipes = this.lsUtil.getWithStorageKey(this.favouriteRecipesKey);
         if (!this.isRecipeAlreadyAFavourite(recipeObjFromSearch)) {
             this.lsUtil.addNewItemToKeyStorage(this.favouriteRecipesKey,recipeObjFromSearch);
             stateManager.setStateByName(this.favouriteRecipesKey,favouriteRecipes);
+            result = true;
         }
-        return favouriteRecipes;
+        return result;
     }
 
     /*
