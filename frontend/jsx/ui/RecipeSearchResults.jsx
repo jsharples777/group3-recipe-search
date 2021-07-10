@@ -38,12 +38,12 @@ export default function RecipeSearchResults(props) {
                     <p className="card-header-title is-size-6">
                         <a target="_blank" href={recipe.URL}>{(recipe.name.length > 23)?recipe.name.substr(0,19)+"...":recipe.name}</a>
                     </p>
-                    <span className="icon-text is-size-5 is-pulled-right pr-3 mt-4">
+                    <span recipe-id={recipe.id} className="icon-text is-size-5 is-pulled-right pr-3 mt-4">
                         <span recipe-id={recipe.id} className="icon">
                             <i recipe-id={recipe.id} className="fas fa-star" onClick={favouriteHandler}></i>
                         </span>
                     </span>
-                    <span className="icon-text is-size-5 is-pulled-right pr-3 mt-4">
+                    <span recipe-id={recipe.id} className="icon-text is-size-5 is-pulled-right pr-3 mt-4">
                         <span recipe-id={recipe.id} className="icon">
                             <i recipe-id={recipe.id} className="fa fa-cart-plus" onClick={shoppingListHandler}></i>
                         </span>

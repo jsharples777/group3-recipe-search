@@ -2,7 +2,7 @@
   "name": "Chop-n-Change",
   "version": "1.0.0",
   "description": "Group 3",
-  "main": "index.html",
+  "main": "server/server.js",
   "scripts": {
     "compile": "babel frontend/jsx --out-dir public/js",
     "watch": "babel frontend/jsx --out-dir public/js --watch --verbose",

@@ -85,7 +85,7 @@ class App extends React.Component {
                                          currentPageNumber={this.state.currentPageNumber}
                                          resultsPerPage={4}
                                          favouriteHandler={this.handleEventAddRecipeToFavourites}
-                                         shoppingListHanlder={this.handleEventAddRecipeToShoppingList}
+                                         shoppingListHandler={this.handleEventAddRecipeToShoppingList}
                                          detailsHandler={this.handleEventShowRecipeDetailsFromSearch}/>
                 </div>
                 <Pagination recipes={this.state.searchResults}
