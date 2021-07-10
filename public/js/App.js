@@ -24,7 +24,7 @@ var App = /*#__PURE__*/function (_React$Component) {
     _this.searchInProgress = false;
     /* turn on console messages for development*/
 
-    logger.setOn();
+    logger.setOff();
     logger.setLevel(200);
     logger.setMinLevel(0); // Event handlers
 
