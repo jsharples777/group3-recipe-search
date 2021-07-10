@@ -114,7 +114,7 @@ var App = /*#__PURE__*/function (_React$Component) {
       style: {
         textAlign: "center"
       }
-    }, "Chop 'n' Change"));
+    }, "Copyright 2021 Chop 'n' Change.  All rights reserved"));
   };
 
   _proto.componentDidMount = function componentDidMount() {
@@ -324,6 +324,7 @@ var App = /*#__PURE__*/function (_React$Component) {
   };
 
   _proto.handleEventShowRecipeDetailsFromSearch = function handleEventShowRecipeDetailsFromSearch(event) {
+    event.preventDefault();
     if (logger.isOn() && 100 <= logger.level() && 100 >= logger.minlevel()) console.log("Handling event - Show Recipe Details from Search Results");
     /*
     collect the recipe attribute from the event

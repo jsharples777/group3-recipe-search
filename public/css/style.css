@@ -38,8 +38,12 @@ nav {
     margin-top: 7px;
 }
 
-.recipe-clickable-image:hover {
-  cursor:pointer;
+.cursor-link:hover {
+    cursor:pointer;
+}
+
+.cursor-link:active {
+    cursor: progress;
 }
 
 

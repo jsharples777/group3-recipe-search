@@ -95,7 +95,7 @@ class App extends React.Component {
                             previousHandler={this.handleEventPaginationPreviousPressed}
                             pageHandler={this.handleEventPaginationPageNumberPressed}/>
 
-                <footer className="footer" style={{textAlign: "center"}}>Chop 'n' Change</footer>
+                <footer className="footer" style={{textAlign: "center"}}>Copyright 2021 Chop 'n' Change.  All rights reserved</footer>
             </div>
         );
     }
@@ -319,6 +319,7 @@ class App extends React.Component {
     }
 
     handleEventShowRecipeDetailsFromSearch(event) {
+        event.preventDefault();
         if (logger.isOn() && (100 <= logger.level()) && (100 >= logger.minlevel())) console.log("Handling event - Show Recipe Details from Search Results");
         /*
         collect the recipe attribute from the event
