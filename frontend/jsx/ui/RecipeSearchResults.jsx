@@ -7,6 +7,7 @@ export default function RecipeSearchResults(props) {
     let favouriteHandler = props.favouriteHandler;
     let shoppingListHandler = props.shoppingListHandler;
     let detailsHandler = props.detailsHandler;
+    let isFavourite = props.isFavourite;
 
 
     // clear the current results list and redraw dynamically
@@ -32,27 +33,27 @@ export default function RecipeSearchResults(props) {
     }
 
     const listItems = recipesForDisplay.map((recipe, index) =>
-        <div key={index} className="column is-mobile is-3-tablet is-3-desktop">
+        <div key={index} className="column is-mobile is-3-tablet is-3-desktop mt-4 pl-3 pr-3">
             <div className="card">
                 <header className="card-header">
-                    <p className="card-header-title is-size-6">
+                    <p className="card-header-title is-size-6-mobile is-size-5-tablet is-size-4-desktop">
                         <a recipe-id={recipe.id}  href="" onClick={detailsHandler}>{(recipe.name.length > 23)?recipe.name.substr(0,19)+"...":recipe.name}</a>
                     </p>
-                    <span recipe-id={recipe.id} className="icon-text is-size-5 is-pulled-right pr-3 mt-4">
+                    <span className="icon-text is-size-5 is-pulled-right pr-3 mt-4">
                         <span recipe-id={recipe.id} className="icon">
-                            <i recipe-id={recipe.id} className="cursor-link fas fa-star" onClick={favouriteHandler}></i>
+                            <i recipe-id={recipe.id} className={(isFavourite(recipe))?"cursor-link fas fa-star":"cursor-link far fa-star"} onClick={favouriteHandler}></i>
                         </span>
                     </span>
-                    <span recipe-id={recipe.id} className="cursor-link icon-text is-size-5 is-pulled-right pr-3 mt-4">
+                    <span className="icon-text is-size-5 is-pulled-right pr-3 mt-4">
                         <span recipe-id={recipe.id} className="icon">
-                            <i recipe-id={recipe.id} className="fa fa-cart-plus" onClick={shoppingListHandler}></i>
+                            <i recipe-id={recipe.id} className="cursor-link fa fa-cart-plus" onClick={shoppingListHandler}></i>
                         </span>
                     </span>
                 </header>
                 <div className="card-image has-text-centered">
                     <figure className={"image is-4by3"}>
-                    <img className="cursor-link " recipe-id={recipe.id} src={recipe.imageURL}
-                         alt={recipe.name} onClick={detailsHandler}/>
+                        <img className="cursor-link" recipe-id={recipe.id} src={recipe.imageURL}
+                             alt={recipe.name} onClick={detailsHandler}/>
                     </figure>
                 </div>
             </div>
@@ -61,11 +62,11 @@ export default function RecipeSearchResults(props) {
 
     return (
 
-            <div className="column is-full">
-                <div id="search-results" className="columns is-justify-content-space-between">
-                    {listItems}
-                </div>
+        <div className="column is-full">
+            <div id="search-results" className="columns is-justify-content-space-between">
+                {listItems}
             </div>
+        </div>
 
     );
 
