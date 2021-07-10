@@ -76,16 +76,18 @@ export default function RecipeDetails(props) {
     className: "ml-3"
   }, dietTypesForDisplay), /*#__PURE__*/React.createElement("p", {
     className: "ml-3"
-  }, mealTypesForDisplay)))), /*#__PURE__*/React.createElement("footer", {
-    className: "modal-card-foot"
+  }, mealTypesForDisplay)))), /*#__PURE__*/React.createElement("footer", null, /*#__PURE__*/React.createElement("div", {
+    className: "columns is-mobile has-background-light pb-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "column is-2 ml-3"
   }, /*#__PURE__*/React.createElement("button", {
     className: "button is-rounded modal-close-button",
     onClick: closeHandler
-  }, "Close"), /*#__PURE__*/React.createElement("div", {
-    className: "is-pulled-right"
+  }, "Close")), /*#__PURE__*/React.createElement("div", {
+    className: "column is-offset-7 is-1"
   }, /*#__PURE__*/React.createElement("button", {
     "recipe-id": recipe.id,
-    className: "button is-rounded ",
+    className: "button is-rounded",
     onClick: favouriteHandler
   }, /*#__PURE__*/React.createElement("span", {
     "recipe-id": recipe.id,
@@ -93,9 +95,11 @@ export default function RecipeDetails(props) {
   }, /*#__PURE__*/React.createElement("i", {
     "recipe-id": recipe.id,
     className: "fas fa-star"
-  }))), /*#__PURE__*/React.createElement("button", {
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "column is-1"
+  }, /*#__PURE__*/React.createElement("button", {
     "recipe-id": recipe.id,
-    className: "button is-rounded ",
+    className: "button is-rounded",
     onClick: shoppingListHandler
   }, /*#__PURE__*/React.createElement("span", {
     "recipe-id": recipe.id,
@@ -103,5 +107,5 @@ export default function RecipeDetails(props) {
   }, /*#__PURE__*/React.createElement("i", {
     "recipe-id": recipe.id,
     className: "fa fa-cart-plus"
-  }))))))));
+  })))))))));
 }

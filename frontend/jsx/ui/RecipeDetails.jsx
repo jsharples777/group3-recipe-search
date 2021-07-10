@@ -64,20 +64,25 @@ export default function RecipeDetails(props) {
                         </div>
 
                     </section>
-                    <footer className="modal-card-foot">
-                        <button className="button is-rounded modal-close-button" onClick={closeHandler}>Close
-                        </button>
-                        <div className="is-pulled-right">
-                            <button recipe-id={recipe.id} className="button is-rounded "  onClick={favouriteHandler}>
-                                <span recipe-id={recipe.id} className="icon">
-                                  <i recipe-id={recipe.id} className="fas fa-star"></i>
-                                </span>
-                            </button>
-                            <button recipe-id={recipe.id} className="button is-rounded "  onClick={shoppingListHandler}>
-                                <span recipe-id={recipe.id} className="icon">
-                                  <i recipe-id={recipe.id} className="fa fa-cart-plus"></i>
-                                </span>
-                            </button>
+                    <footer>
+                        <div className="columns is-mobile has-background-light pb-4">
+                            <div className={"column is-2 ml-3"}>
+                                <button className="button is-rounded modal-close-button" onClick={closeHandler}>Close</button>
+                            </div>
+                            <div className={"column is-offset-7 is-1"}>
+                                <button recipe-id={recipe.id} className="button is-rounded"  onClick={favouriteHandler}>
+                                    <span recipe-id={recipe.id} className="icon">
+                                        <i recipe-id={recipe.id} className="fas fa-star"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div className={"column is-1"}>
+                                <button recipe-id={recipe.id} className="button is-rounded"  onClick={shoppingListHandler}>
+                                    <span recipe-id={recipe.id} className="icon">
+                                        <i recipe-id={recipe.id} className="fa fa-cart-plus"></i>
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </footer>
                 </div>
