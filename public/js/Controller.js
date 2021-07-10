@@ -13,16 +13,19 @@ export default class Controller {
 
         // setup query URLs
         this.queryURLRecipesSearch = "/recipes";
+        this.supermarketURLSearch = "/supermarkets";
 
         // setup local storage key and previous searches array
         this.shoppingListKey = "shoppinglist";
         this.favouriteRecipesKey = "favouriterecipes";
         this.recipeSearchResultsKey = "recipesearch";
+        this.locationSearchResultsKey = "locations";
 
         // setup state management listeners
         this.listenForRecipeSearchResultsStateChange = this.listenForRecipeSearchResultsStateChange.bind(this);
         this.listenForFavouriteRecipesStateChange = this.listenForFavouriteRecipesStateChange.bind(this);
         this.listenForShoppingListStateChange = this.listenForShoppingListStateChange.bind(this);
+        this.listenForLocationListStateChange = this.listenForLocationListStateChange.bind(this);
 
         // setup state management
         stateManager.setStateByName(this.recipeSearchResultsKey,[]);
@@ -31,9 +34,20 @@ export default class Controller {
         stateManager.addChangeListenerForName(this.favouriteRecipesKey,this.listenForFavouriteRecipesStateChange)
         stateManager.setStateByName(this.shoppingListKey,[]);
         stateManager.addChangeListenerForName(this.shoppingListKey,this.listenForShoppingListStateChange)
+        stateManager.setStateByName(this.locationSearchResultsKey,[]);
+        stateManager.addChangeListenerForName(this.locationSearchResultsKey,this.listenForLocationListStateChange);
+
+        //location callbacks
+        this.callbackSearchForSupermarketsWithLocation = this.callbackSearchForSupermarketsWithLocation.bind(this);
+        this.callbackSearchForSupermarketsWithoutLocation = this.callbackSearchForSupermarketsWithoutLocation.bind(this);
 
         // setup Async callbacks for the fetch requests
         this.callbackForRecipeSearch = this.callbackForRecipeSearch.bind(this);
+        this.callbackForLocationSearch = this.callbackForLocationSearch.bind(this);
+    }
+
+    listenForLocationListStateChange(name, locations) {
+        this.applicationView.setState({showLocations:true,locations:locations});
     }
 
     listenForRecipeSearchResultsStateChange(name, recipes) {
@@ -71,6 +85,27 @@ export default class Controller {
             URL: edamamRecipe.url
         }
         return recipe;
+    }
+    callbackForLocationSearch(jsonData, httpStatus = 200) {
+        if (logger.isOn() && (200 <= logger.level()) && (200 >= logger.minlevel())) console.log(`Callback Recipe Search with status ${httpStatus}`, 3);
+        let googleLocations = [];
+        if (httpStatus >= 200 && httpStatus <= 299) { // do we have any data?
+            if (logger.isOn() && (200 <= logger.level()) && (200 >= logger.minlevel())) console.log(jsonData);
+            let locations = jsonData.candidates;
+            if (logger.isOn() && (200 <= logger.level()) && (200 >= logger.minlevel())) console.log(locations);
+            for (let index = 0; index < locations.length; index++) {
+                let location = locations[index];
+                if (logger.isOn() && (200 <= logger.level()) && (200 >= logger.minlevel())) console.log(location);
+                let googleLocation = {
+                    name: location.name,
+                    address: location.formatted_address,
+                    isOpen: (location.opening_hours)?location.opening_hours.open_now:false
+                }
+                googleLocations.push(googleLocation);
+            }
+        }
+        this.lsUtil.saveWithStorageKey(this.locationSearchResultsKey,googleLocations);
+        stateManager.setStateByName(this.locationSearchResultsKey,googleLocations);
     }
 
     callbackForRecipeSearch(jsonData, httpStatus = 200) {
@@ -173,6 +208,29 @@ export default class Controller {
         fetchUtil.fetchQLJSON(this.queryURLRecipesSearch, parameters, this.callbackForRecipeSearch);
     }
 
+    callbackSearchForSupermarketsWithLocation(location) {
+        // construct the parameters for the JSON call
+        let parameters = {
+            lat: location.coords.latitude,
+            lon: location.coords.longitude
+        };
+
+        fetchUtil.fetchQLJSON(this.supermarketURLSearch, parameters, this.callbackForLocationSearch);
+    }
+
+    callbackSearchForSupermarketsWithoutLocation() {
+        // construct the parameters for the JSON call
+        let parameters = {};
+
+        fetchUtil.fetchQLJSON(this.supermarketURLSearch, parameters, this.callbackForLocationSearch);
+
+    }
+    searchForSupermarkets() {
+        if (window.navigator.geolocation) {
+            window.navigator.geolocation.getCurrentPosition(this.callbackSearchForSupermarketsWithLocation,this.callbackSearchForSupermarketsWithoutLocation);
+        }
+    }
+
     /*
        Get the current contents of the saved shopping list
        Returns the current saved ingredient list (array of strings)
@@ -187,6 +245,12 @@ export default class Controller {
         let previousSearch = this.lsUtil.getWithStorageKey(this.recipeSearchResultsKey);
         if (isStateChange) stateManager.setStateByName(this.recipeSearchResultsKey,previousSearch);
         return previousSearch;
+    }
+
+    getLocations() {
+        let locations = this.lsUtil.getWithStorageKey(this.locationSearchResultsKey);
+        stateManager.setStateByName(this.locationSearchResultsKey,locations);
+        return locations;
     }
 
     /*

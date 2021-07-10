@@ -5,6 +5,7 @@ import RecipeDetails from "./ui/RecipeDetails.js";
 import RecipeSearchResults from "./ui/RecipeSearchResults.js";
 import Pagination from "./ui/Pagination.js";
 import logger from "./util/SimpleDebug.js";
+import LocationList from "./ui/LocationList.js";
 
 class App extends React.Component {
     constructor() {
@@ -20,10 +21,14 @@ class App extends React.Component {
         // Event handlers
         this.handleEventStartRecipeSearch = this.handleEventStartRecipeSearch.bind(this);
         this.handleEventStartRecipeSearchKeyUp = this.handleEventStartRecipeSearchKeyUp.bind(this);
+        this.handleEventStartLocationSearch = this.handleEventStartLocationSearch.bind(this);
+
         this.handleEventAddRecipeToFavourites = this.handleEventAddRecipeToFavourites.bind(this);
         this.handleEventRemoveRecipeFromFavourites = this.handleEventRemoveRecipeFromFavourites.bind(this);
         this.handleEventAddRecipeToShoppingList = this.handleEventAddRecipeToShoppingList.bind(this);
         this.handleEventShowShoppingList = this.handleEventShowShoppingList.bind(this);
+        this.handleEventShowLocationList = this.handleEventShowLocationList.bind(this);
+
         this.handleEventShowFavouriteRecipes = this.handleEventShowFavouriteRecipes.bind(this);
         this.handleEventRemoveIngredientFromShoppingList = this.handleEventRemoveIngredientFromShoppingList.bind(this);
         this.handleEventShowRecipeDetailsFromFavourites = this.handleEventShowRecipeDetailsFromFavourites.bind(this);
@@ -43,9 +48,11 @@ class App extends React.Component {
             searchResults: [],
             shoppingList: [],
             favouriteRecipes: [],
+            locations:[],
             showShoppingList: false,
             showFavouriteRecipes: false,
             showRecipeDetails: false,
+            showLocations:false,
             selectedRecipe: null,
             selectedRecipeIsFavourite: false,
             currentPageNumber: 1,
@@ -56,7 +63,7 @@ class App extends React.Component {
     }
 
     handleCloseModals(event) {
-        this.setState({showShoppingList: false, showFavouriteRecipes: false, showRecipeDetails: false});
+        this.setState({showShoppingList: false, showFavouriteRecipes: false, showRecipeDetails: false,showLocations:false});
     }
 
     doNothingHandler(event) {
@@ -70,7 +77,11 @@ class App extends React.Component {
                     <ShoppingList shoppingList={this.state.shoppingList}
                                   deleteHandler={this.handleEventRemoveIngredientFromShoppingList}
                                   closeHandler={this.handleCloseModals}
+                                  locationHandler={this.handleEventStartLocationSearch}
                                   shouldShow={this.state.showShoppingList}/>
+                    <LocationList locations={this.state.locations}
+                                  closeHandler={this.handleCloseModals}
+                                  shouldShow={this.state.showLocations}/>
                     <FavouriteRecipes favouriteRecipes={this.state.favouriteRecipes}
                                       deleteHandler={this.handleEventRemoveRecipeFromFavourites}
                                       closeHandler={this.handleCloseModals}
@@ -181,6 +192,20 @@ class App extends React.Component {
         if (event.keyCode === 13) {
             this.handleEventStartRecipeSearch(event);
         }
+    }
+
+    handleEventStartLocationSearch(event) {
+        if (logger.isOn() && (100 <= logger.level()) && (100 >= logger.minlevel())) console.log("Handling event - Start Location Search");
+        this.handleCloseModals();
+        this.setState({showLocations:true,locations:[]});
+        this.controller.searchForSupermarkets();
+    }
+
+
+    handleEventShowLocationList(event) {
+        if (logger.isOn() && (100 <= logger.level()) && (100 >= logger.minlevel())) console.log("Handling event - Show Location List");
+        // ask the controller to change the state and get the favourite recipes list
+        this.setState({showLocations: true, locations: this.controller.getLocations()});
     }
 
     handleEventStartRecipeSearch(event) {
