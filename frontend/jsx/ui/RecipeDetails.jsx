@@ -33,7 +33,8 @@ export default function RecipeDetails(props) {
     recipe.diet.map((typeText,index) => {
         hashTagsForDisplay += "#" + typeText + " ";
     });
-    hashTagsForDisplay.toLowerCase();
+
+    hashTagsForDisplay = hashTagsForDisplay.toLowerCase();
 
     let goToExternalPage = function(event) {
         window.open(recipe.URL,"_blank");
