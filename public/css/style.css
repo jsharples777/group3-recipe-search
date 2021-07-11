@@ -207,4 +207,14 @@ nav {
     .truncate-recipe-search {
         width: 100px;
     }
+    .truncate-shopping-list {
+        width: 200px;
+    }
+    .truncate-location {
+        width: 230px;
+    }
+
+    .truncate-recipe-details {
+        width: 150px;
+    }
 }
