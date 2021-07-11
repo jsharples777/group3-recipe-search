@@ -184,11 +184,6 @@ nav {
     }
 }
 
-@media (max-width: 640px) {
-    .truncate-recipe-search {
-        width: 350px;
-    }
-}
 
 @media (max-width: 640px) {
     .truncate-recipe-search {
